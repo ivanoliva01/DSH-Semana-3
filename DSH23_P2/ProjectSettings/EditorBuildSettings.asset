@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SegundaEscena.unity
     guid: 0e8d11f0482e6ff449b55587cdb10405
+  - enabled: 1
+    path: Assets/Scenes/TerceraEscena.unity
+    guid: 3bae9492348d37048897e3c4c3f1203e
+  - enabled: 1
+    path: Assets/Scenes/VictoriaEscena.unity
+    guid: 65bf236c12f978a4e86d24ad3addd7b0
+  - enabled: 1
+    path: Assets/Scenes/DerrotaEscena.unity
+    guid: f497edfa3397b7c42853997a05f3d98e
   m_configObjects: {}

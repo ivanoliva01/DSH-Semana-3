@@ -19,6 +19,8 @@ public class Movimiento : MonoBehaviour
     public Text textoPuntuacion;
     public GameObject prefabPremio;
 
+    Scene escena;
+
     private Rigidbody rb;
     private Vector3 direccionActual;
     private AudioSource SonidoDeCambioDireccion;
@@ -29,6 +31,9 @@ public class Movimiento : MonoBehaviour
         offset = cam.transform.position;
 
         premios = 0;
+
+        // Obtener la escena activa
+        escena = SceneManager.GetActiveScene();
 
         valX = 0.0f;
         valZ = 0.0f;
@@ -54,6 +59,11 @@ public class Movimiento : MonoBehaviour
 
         float tiempo = velocidad * Time.deltaTime;
         rb.transform.Translate(direccionActual*tiempo);
+
+        if (transform.position.y <= -10.0f)
+        {
+            SceneManager.LoadScene("DerrotaEscena", LoadSceneMode.Single); 
+        }
         
     }
 
@@ -73,11 +83,10 @@ public class Movimiento : MonoBehaviour
     }
 
     IEnumerator CrearSuelo(Collision col){
-        yield return new WaitForSeconds(0.5f); //espera de 5 s
+        yield return new WaitForSeconds(0.5f); //espera de 0.5 s
         col.rigidbody.isKinematic = false;
         col.rigidbody.useGravity = true;
-        yield return new WaitForSeconds(1f); //espera de 5 s
-        Destroy(col.gameObject); // se destruye el suelo
+
         float ran = Random.Range(0f,1f); //creo un suelo nuevo de forma aleatoria, o hacia delante o hacia la derecha
         if(ran <= 0.5f)//creo un cubo hacia delante
             valX += 6.0f;
@@ -89,19 +98,23 @@ public class Movimiento : MonoBehaviour
 
         // Generar premios: (se podría poner dentro de los if anteriores, pero por claridad he preferido ponerlo separado)
         // Generar el premio en un sitio aleatorio del suelo
-        float ranSpawnZ = Random.Range(-2.5f, 2.5f);
-        float ranSpawnX = Random.Range(-2.5f, 2.5f);
+        float ranSpawnZ = Random.Range(-2.0f, 2.0f);
+        float ranSpawnX = Random.Range(-2.0f, 2.0f);
 
         // Premio delante
-        if (ran <= 0.2f)
+        if (ran <= 0.25f)
         {
             GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX, 1.0f, valZ + ranSpawnZ), Quaternion.identity) as GameObject;
         }
         // Premio a la derecha
-        if (ran >= 0.8f)
+        if (ran >= 0.75f)
         {
             GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX + ranSpawnX, 1.0f, valZ), Quaternion.identity) as GameObject;
         }
+
+        // Se destruye el suelo después de crear el nuevo suelo para evitar que la espera no cree el nuevo suelo antes de que el jugador llegue
+        yield return new WaitForSeconds(1.0f); //espera de 1 s
+        Destroy(col.gameObject); // se destruye el suelo
     }
 
     void OnTriggerEnter(Collider other)
@@ -113,16 +126,17 @@ public class Movimiento : MonoBehaviour
             premios++;
             textoPuntuacion.text = "Puntuación: " + premios;
             Destroy(other.gameObject);
+
+            // Pasar al siguiente nivel o ganar, dependiendo del nivel actual y los premios conseguidos
+            if (premios == 3 && escena.name == "SegundaEscena")
+            {
+                SceneManager.LoadScene("TerceraEscena", LoadSceneMode.Single);    
+            }
+            if (premios == 5 && escena.name == "TerceraEscena")
+            {
+                SceneManager.LoadScene("VictoriaEscena", LoadSceneMode.Single);  
+            }
         }
-        /*
-        // Pasar al siguiente nivel o ganar, dependiendo del nivel actual y los premios conseguidos
-        if (premios == 6 && escena.name == "SegundaEscena")
-        {
-            SceneManager.LoadScene("TerceraEscena", LoadSceneMode.Single);    
-        }
-        if (premios == 10 && escena.name == "TerceraEscena")
-        {
-            texto.text = "Felicidades, Has ganado! :D";
-        }*/
+        
     }
 }
