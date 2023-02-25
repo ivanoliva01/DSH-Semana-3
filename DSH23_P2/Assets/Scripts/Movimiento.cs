@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Movimiento : MonoBehaviour
 {
@@ -9,11 +11,13 @@ public class Movimiento : MonoBehaviour
     public int velocidad;
 
     Vector3 offset;
-    //Rigidbody rb;
 
     float valX;
     float valZ;
 
+    int premios;
+    public Text textoPuntuacion;
+    public GameObject prefabPremio;
 
     private Rigidbody rb;
     private Vector3 direccionActual;
@@ -23,7 +27,8 @@ public class Movimiento : MonoBehaviour
     void Start()
     {
         offset = cam.transform.position;
-        //rb = GetComponent<Rigidbody>();
+
+        premios = 0;
 
         valX = 0.0f;
         valZ = 0.0f;
@@ -36,17 +41,9 @@ public class Movimiento : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Obtener el input del movimiento
-        //float movHorizontal = Input.GetAxis("Horizontal");
-        //float movVertical = Input.GetAxis("Vertical");
+        cam.transform.position = this.transform.position + offset; //para mover la camara con la bola
 
-        // Mover el jugador
-        //Vector3 movimiento = new Vector3(movHorizontal, 0.0f, movVertical);
-        //rb.AddForce(movimiento * velocidad);
-
-        // Mover la camara
-        //cam.transform.position = this.transform.position + offset;
-        cam.transform.position = this.transform.position + offset; //para mover la camara con la bol
+        // Obtener input del jugador para cambiar la dirección de la pelota
         if(Input.GetKeyUp(KeyCode.Space)){
             SonidoDeCambioDireccion.Play();
             if(direccionActual == Vector3.forward)
@@ -82,12 +79,50 @@ public class Movimiento : MonoBehaviour
         yield return new WaitForSeconds(1f); //espera de 5 s
         Destroy(col.gameObject); // se destruye el suelo
         float ran = Random.Range(0f,1f); //creo un suelo nuevo de forma aleatoria, o hacia delante o hacia la derecha
-        if(ran < 0.5f)//creo un cubo hacia delante
+        if(ran <= 0.5f)//creo un cubo hacia delante
             valX += 6.0f;
         else
             valZ += 6.0f;
         
         //creo un cubo nuevo
         GameObject elSuelo = Instantiate(prefabSuelo, new Vector3(valX, 0.0f, valZ), Quaternion.identity) as GameObject;
+
+        // Generar premios: (se podría poner dentro de los if anteriores, pero por claridad he preferido ponerlo separado)
+        // Generar el premio en un sitio aleatorio del suelo
+        float ranSpawnZ = Random.Range(-2.5f, 2.5f);
+        float ranSpawnX = Random.Range(-2.5f, 2.5f);
+
+        // Premio delante
+        if (ran <= 0.2f)
+        {
+            GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX, 1.0f, valZ + ranSpawnZ), Quaternion.identity) as GameObject;
+        }
+        // Premio a la derecha
+        if (ran >= 0.8f)
+        {
+            GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX + ranSpawnX, 1.0f, valZ), Quaternion.identity) as GameObject;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // Si el objeto con el que nos chocamos es un premio, destruirlo y aumentar premios
+        if (other.gameObject.CompareTag("Premio"))
+        {
+            Debug.Log("Has conseguido un premio!");
+            premios++;
+            textoPuntuacion.text = "Puntuación: " + premios;
+            Destroy(other.gameObject);
+        }
+        /*
+        // Pasar al siguiente nivel o ganar, dependiendo del nivel actual y los premios conseguidos
+        if (premios == 6 && escena.name == "SegundaEscena")
+        {
+            SceneManager.LoadScene("TerceraEscena", LoadSceneMode.Single);    
+        }
+        if (premios == 10 && escena.name == "TerceraEscena")
+        {
+            texto.text = "Felicidades, Has ganado! :D";
+        }*/
     }
 }
