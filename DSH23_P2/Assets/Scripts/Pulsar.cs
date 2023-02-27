@@ -6,12 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class Pulsar : MonoBehaviour
 {
+    // [SerializeField] hace que el objeto sea privado pero aparezca como públic en el editor de Unity
 
-    public Button btn;
-    public Image img;
-    public Sprite[] spNumeros;
+    [SerializeField] Button btn;
+    [SerializeField] Image img;
+    [SerializeField] Sprite[] spNumeros;
+    [SerializeField] Text texto;
 
-    public Text texto;
+    [SerializeField] AudioSource source {get {return GetComponent<AudioSource>();}}
+    [SerializeField] AudioClip clip;
 
     bool contar;
     int numero;
@@ -28,13 +31,18 @@ public class Pulsar : MonoBehaviour
         // Añadimos un listener, y cuando pulsemos el boton se llama a la función Pulsado
         btn.onClick.AddListener(Pulsado);
 
+        gameObject.AddComponent<AudioSource>();
         contar = false;
         numero = 3;
     }
 
     void Pulsado()
     {
+        // Ejecutar el sonido clip:
+        source.PlayOneShot(clip);
+
         img.gameObject.SetActive(true);
+
         // Desactivamos el boton para evitar pulsarlo varias veces
         btn.gameObject.SetActive(false);
         contar = true;
@@ -48,15 +56,11 @@ public class Pulsar : MonoBehaviour
             switch (numero)
             {
                 case 0: 
-                    Debug.Log("Terminado - Salto a otra escena.");
                     SceneManager.LoadScene("SegundaEscena", LoadSceneMode.Single); 
                     break;
                 case 1:
                     img.sprite = spNumeros[0];
                     texto.text = "1";
-
-                    // Estaba probando como mover el elemento, pero pasamos a otra cosa
-                    //texto.rectTransform.anchoredPosition = texto.rectTransform.anchoredPosition + new Vector2(30.0f, texto.rectTransform.anchoredPosition.y);
                     break;
                 case 2:
                     img.sprite = spNumeros[1];
@@ -76,7 +80,7 @@ public class Pulsar : MonoBehaviour
 
     IEnumerator Esperar()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.0f);
 
         contar = true;
 

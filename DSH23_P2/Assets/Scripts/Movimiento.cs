@@ -6,28 +6,41 @@ using UnityEngine.SceneManagement;
 
 public class Movimiento : MonoBehaviour
 {
-    public Camera cam;
-    public GameObject prefabSuelo;
-    public int velocidad;
+    // [SerializeField] hace que el objeto sea privado pero aparezca como públic en el editor de Unity
+    // [Tooltip("Explicacion de la variable")] hace que cuando pongas el cursor en la variable, se muestre "Explicacion de la variable"
+
+    [SerializeField] Camera cam;
+
+    [SerializeField] [Tooltip("Prefab que se va a usar como suelo.")]
+    GameObject prefabSuelo;
+
+    [SerializeField] [Tooltip("Velocidad del jugador.")]
+    int velocidad;
 
     Vector3 offset;
-
     float valX;
     float valZ;
 
     int premios;
-    public Text textoPuntuacion;
-    public GameObject prefabPremio;
+    [SerializeField] Text textoPuntuacion;
+
+    [SerializeField] [Tooltip("Prefab que se va a usar como premio.")]
+    GameObject prefabPremio;
 
     Scene escena;
-
     private Rigidbody rb;
+
     private Vector3 direccionActual;
-    private AudioSource SonidoDeCambioDireccion;
+    private AudioSource AudioSource;
+    [SerializeField] private AudioClip SonidoDeCambioDireccion;
+    [SerializeField] private AudioClip SonidoChoque;
+
+    //GameObject Reiniciar; //boton de reinicio
 
     // Start is called before the first frame update
     void Start()
     {
+        // Obtenemos la posicion de la camara al inicio del juego
         offset = cam.transform.position;
 
         premios = 0;
@@ -39,8 +52,12 @@ public class Movimiento : MonoBehaviour
         valZ = 0.0f;
         rb = GetComponent<Rigidbody>();
         direccionActual = Vector3.forward;
-        SonidoDeCambioDireccion = GetComponent<AudioSource>();
+        AudioSource = GetComponent<AudioSource>();
+
+        // Llamamos a SueloInicial:
         SueloInicial();
+
+        //Reiniciar.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -50,25 +67,28 @@ public class Movimiento : MonoBehaviour
 
         // Obtener input del jugador para cambiar la dirección de la pelota
         if(Input.GetKeyUp(KeyCode.Space)){
-            SonidoDeCambioDireccion.Play();
+            AudioSource.PlayOneShot(SonidoDeCambioDireccion);
             if(direccionActual == Vector3.forward)
                 direccionActual = Vector3.right;
             else
                 direccionActual = Vector3.forward;
         }
 
+        // Mover la pelota:
         float tiempo = velocidad * Time.deltaTime;
         rb.transform.Translate(direccionActual*tiempo);
 
+        // Si el jugador se cae, cargar la escena de derrota
         if (transform.position.y <= -10.0f)
         {
-            SceneManager.LoadScene("DerrotaEscena", LoadSceneMode.Single); 
+            SceneManager.LoadScene("DerrotaEscena", LoadSceneMode.Single);
+            //Reiniciar.gameObject.SetActive(true);
         }
-        
     }
 
     void SueloInicial()
     {
+        // Generar tres plataformas delante del jugador:
         for (int n = 0; n < 3; n++)
         {
             valZ += 6.0f;
@@ -77,6 +97,7 @@ public class Movimiento : MonoBehaviour
     }
 
     void OnCollisionExit(Collision other) {
+        // Al salir de un suelo, llamar a la corutina CrearSuelo
         if(other.transform.tag == "Suelo"){
             StartCoroutine(CrearSuelo(other));
         }
@@ -84,6 +105,7 @@ public class Movimiento : MonoBehaviour
 
     IEnumerator CrearSuelo(Collision col){
         yield return new WaitForSeconds(0.5f); //espera de 0.5 s
+        // Hacer que el suelo caiga:
         col.rigidbody.isKinematic = false;
         col.rigidbody.useGravity = true;
 
@@ -122,6 +144,8 @@ public class Movimiento : MonoBehaviour
         // Si el objeto con el que nos chocamos es un premio, destruirlo y aumentar premios
         if (other.gameObject.CompareTag("Premio"))
         {
+            // Ejecutar el sonido SonidoChoque:
+            AudioSource.PlayOneShot(SonidoChoque);
             Debug.Log("Has conseguido un premio!");
             premios++;
             textoPuntuacion.text = "Puntuación: " + premios;

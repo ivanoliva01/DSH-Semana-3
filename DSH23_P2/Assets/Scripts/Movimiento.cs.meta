@@ -3,7 +3,14 @@ guid: a0e2caeb79ffa674ca0ece59e95335c0
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cam: {instanceID: 0}
+  - prefabSuelo: {instanceID: 0}
+  - textoPuntuacion: {instanceID: 0}
+  - prefabPremio: {instanceID: 0}
+  - SonidoDeCambioDireccion: {instanceID: 0}
+  - SonidoChoque: {instanceID: 0}
+  - Reiniciar: {fileID: 3454660620404468957, guid: 1cd581d4730db2a4fbfe2ab899a189cf, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

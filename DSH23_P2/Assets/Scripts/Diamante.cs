@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class Diamante : MonoBehaviour
 {
+    // [SerializeField] hace que el objeto sea privado pero aparezca como públic en el editor de Unity
+    // [Tooltip("Explicacion de la variable")] hace que cuando pongas el cursor en la variable, se muestre "Explicacion de la variable"
 
-    public float velocidad = 45.0f;
-    public int puntuacion = 1;
+    [SerializeField] [Tooltip("Velocidad de rotacion.")]
+    float velocidad = 45.0f;
 
-    public GameObject particle;
+    //[SerializeField] [Tooltip("Puntuacion obtenida al tocar el premio.")]
+    //int puntuacion = 1;
+
+    [SerializeField] [Tooltip("Prefab de la particular a usar al tocar el premio.")]
+    GameObject particle;
+
 
     // Start is called before the first frame update
     void Start()
