@@ -30,7 +30,6 @@ public class Pulsar : MonoBehaviour
 
         // Añadimos un listener, y cuando pulsemos el boton se llama a la función Pulsado
         btn.onClick.AddListener(Pulsado);
-
         gameObject.AddComponent<AudioSource>();
         contar = false;
         numero = 3;

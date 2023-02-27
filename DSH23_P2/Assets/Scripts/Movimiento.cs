@@ -42,12 +42,9 @@ public class Movimiento : MonoBehaviour
     {
         // Obtenemos la posicion de la camara al inicio del juego
         offset = cam.transform.position;
-
         premios = 0;
-
         // Obtener la escena activa
         escena = SceneManager.GetActiveScene();
-
         valX = 0.0f;
         valZ = 0.0f;
         rb = GetComponent<Rigidbody>();
