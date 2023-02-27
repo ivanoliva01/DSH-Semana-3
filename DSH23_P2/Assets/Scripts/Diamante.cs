@@ -7,8 +7,8 @@ public class Diamante : MonoBehaviour
 
     public float velocidad = 45.0f;
     public int puntuacion = 1;
-
     public GameObject particle;
+
 
     // Start is called before the first frame update
     void Start()

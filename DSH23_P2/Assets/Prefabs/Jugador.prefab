@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6565303511733403490}
   - component: {fileID: 6565303511733403491}
   - component: {fileID: 6565303511733403500}
-  - component: {fileID: 6565303511733403494}
+  - component: {fileID: 5971594095169192214}
   m_Layer: 0
   m_Name: Jugador
   m_TagString: Untagged
@@ -104,6 +104,8 @@ MonoBehaviour:
   velocidad: 3
   textoPuntuacion: {fileID: 0}
   prefabPremio: {fileID: 8821841393732941734, guid: 4163d71ff3a05c04c860be44ff1ce9fe, type: 3}
+  SonidoDeCambioDireccion: {fileID: 8300000, guid: c3fa57ddae3570447ac9235211771374, type: 3}
+  SonidoChoque: {fileID: 8300000, guid: 527dd657bc741cf4e8f766fa8fa1eb0a, type: 3}
 --- !u!135 &6565303511733403491
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -133,7 +135,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!82 &6565303511733403494
+--- !u!82 &5971594095169192214
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,8 +146,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c3fa57ddae3570447ac9235211771374, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 0.757
+  m_PlayOnAwake: 1
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0

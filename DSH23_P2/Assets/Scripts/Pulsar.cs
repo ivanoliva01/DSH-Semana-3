@@ -10,6 +10,8 @@ public class Pulsar : MonoBehaviour
     public Button btn;
     public Image img;
     public Sprite[] spNumeros;
+    public AudioSource source {get {return GetComponent<AudioSource>();}}
+    public AudioClip clip;
 
     public Text texto;
 
@@ -27,13 +29,14 @@ public class Pulsar : MonoBehaviour
 
         // Añadimos un listener, y cuando pulsemos el boton se llama a la función Pulsado
         btn.onClick.AddListener(Pulsado);
-
+        gameObject.AddComponent<AudioSource>();
         contar = false;
         numero = 3;
     }
 
     void Pulsado()
     {
+        source.PlayOneShot(clip);
         img.gameObject.SetActive(true);
         // Desactivamos el boton para evitar pulsarlo varias veces
         btn.gameObject.SetActive(false);

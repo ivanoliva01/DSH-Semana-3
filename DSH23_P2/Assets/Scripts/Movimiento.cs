@@ -23,24 +23,25 @@ public class Movimiento : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 direccionActual;
-    private AudioSource SonidoDeCambioDireccion;
+    private AudioSource AudioSource;
+    [SerializeField] private AudioClip SonidoDeCambioDireccion;
+    [SerializeField] private AudioClip SonidoChoque;
+    public GameObject Reiniciar; //boton de reinicio
 
     // Start is called before the first frame update
     void Start()
     {
         offset = cam.transform.position;
-
         premios = 0;
-
         // Obtener la escena activa
         escena = SceneManager.GetActiveScene();
-
         valX = 0.0f;
         valZ = 0.0f;
         rb = GetComponent<Rigidbody>();
         direccionActual = Vector3.forward;
-        SonidoDeCambioDireccion = GetComponent<AudioSource>();
+        AudioSource = GetComponent<AudioSource>();
         SueloInicial();
+        Reiniciar.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -50,7 +51,7 @@ public class Movimiento : MonoBehaviour
 
         // Obtener input del jugador para cambiar la dirección de la pelota
         if(Input.GetKeyUp(KeyCode.Space)){
-            SonidoDeCambioDireccion.Play();
+            AudioSource.PlayOneShot(SonidoDeCambioDireccion);
             if(direccionActual == Vector3.forward)
                 direccionActual = Vector3.right;
             else
@@ -62,9 +63,10 @@ public class Movimiento : MonoBehaviour
 
         if (transform.position.y <= -10.0f)
         {
-            SceneManager.LoadScene("DerrotaEscena", LoadSceneMode.Single); 
+            SceneManager.LoadScene("DerrotaEscena", LoadSceneMode.Single);
+            Reiniciar.gameObject.SetActive(true);
+
         }
-        
     }
 
     void SueloInicial()
@@ -122,6 +124,7 @@ public class Movimiento : MonoBehaviour
         // Si el objeto con el que nos chocamos es un premio, destruirlo y aumentar premios
         if (other.gameObject.CompareTag("Premio"))
         {
+            AudioSource.PlayOneShot(SonidoChoque);
             Debug.Log("Has conseguido un premio!");
             premios++;
             textoPuntuacion.text = "Puntuación: " + premios;
