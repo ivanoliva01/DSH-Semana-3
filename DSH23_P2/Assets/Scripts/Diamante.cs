@@ -38,6 +38,8 @@ public class Diamante : MonoBehaviour
         Instantiate(particle.gameObject, transform.position, randomRotation);
         
         // Destruir las particulas despues de 10 segundos
-        Destroy(particle, 10.0f);
+        //Destroy(particle, 10.0f);
+        // En vez de usar Destroy, el prefab de las particulas tiene una opcion, "Stop Action" que destruye las particulas una vez acaban, 
+        // es preferible usar Stop action para este caso.
     }
 }

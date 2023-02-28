@@ -102,38 +102,42 @@ public class Movimiento : MonoBehaviour
 
     IEnumerator CrearSuelo(Collision col){
         yield return new WaitForSeconds(0.5f); //espera de 0.5 s
-        // Hacer que el suelo caiga:
-        col.rigidbody.isKinematic = false;
-        col.rigidbody.useGravity = true;
-
-        float ran = Random.Range(0f,1f); //creo un suelo nuevo de forma aleatoria, o hacia delante o hacia la derecha
-        if(ran <= 0.5f)//creo un cubo hacia delante
-            valX += 6.0f;
-        else
-            valZ += 6.0f;
+        // Comprobamos que rigidbody existe
+        if (col.rigidbody != null)
+        {
+            // Hacer que el suelo caiga:
+            col.rigidbody.isKinematic = false;
+            col.rigidbody.useGravity = true;
         
-        //creo un cubo nuevo
-        GameObject elSuelo = Instantiate(prefabSuelo, new Vector3(valX, 0.0f, valZ), Quaternion.identity) as GameObject;
+            float ran = Random.Range(0f,1f); //creo un suelo nuevo de forma aleatoria, o hacia delante o hacia la derecha
+            if(ran <= 0.5f)//creo un cubo hacia delante
+                valX += 6.0f;
+            else
+                valZ += 6.0f;
+            
+            //creo un cubo nuevo
+            GameObject elSuelo = Instantiate(prefabSuelo, new Vector3(valX, 0.0f, valZ), Quaternion.identity) as GameObject;
 
-        // Generar premios: (se podría poner dentro de los if anteriores, pero por claridad he preferido ponerlo separado)
-        // Generar el premio en un sitio aleatorio del suelo
-        float ranSpawnZ = Random.Range(-2.0f, 2.0f);
-        float ranSpawnX = Random.Range(-2.0f, 2.0f);
+            // Generar premios: (se podría poner dentro de los if anteriores, pero por claridad he preferido ponerlo separado)
+            // Generar el premio en un sitio aleatorio del suelo
+            float ranSpawnZ = Random.Range(-2.0f, 2.0f);
+            float ranSpawnX = Random.Range(-2.0f, 2.0f);
 
-        // Premio delante
-        if (ran <= 0.25f)
-        {
-            GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX, 1.0f, valZ + ranSpawnZ), Quaternion.identity) as GameObject;
+            // Premio delante
+            if (ran <= 0.25f)
+            {
+                GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX, 1.0f, valZ + ranSpawnZ), Quaternion.identity) as GameObject;
+            }
+            // Premio a la derecha
+            if (ran >= 0.75f)
+            {
+                GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX + ranSpawnX, 1.0f, valZ), Quaternion.identity) as GameObject;
+            }
+
+            // Se destruye el suelo después de crear el nuevo suelo para evitar que la espera no cree el nuevo suelo antes de que el jugador llegue
+            yield return new WaitForSeconds(1.0f); //espera de 1 s
+            Destroy(col.gameObject); // se destruye el suelo
         }
-        // Premio a la derecha
-        if (ran >= 0.75f)
-        {
-            GameObject elPremio = Instantiate(prefabPremio, new Vector3(valX + ranSpawnX, 1.0f, valZ), Quaternion.identity) as GameObject;
-        }
-
-        // Se destruye el suelo después de crear el nuevo suelo para evitar que la espera no cree el nuevo suelo antes de que el jugador llegue
-        yield return new WaitForSeconds(1.0f); //espera de 1 s
-        Destroy(col.gameObject); // se destruye el suelo
     }
 
     void OnTriggerEnter(Collider other)
@@ -149,11 +153,11 @@ public class Movimiento : MonoBehaviour
             Destroy(other.gameObject);
 
             // Pasar al siguiente nivel o ganar, dependiendo del nivel actual y los premios conseguidos
-            if (premios == 3 && escena.name == "SegundaEscena")
+            if (premios == 2 && escena.name == "SegundaEscena")
             {
                 SceneManager.LoadScene("TerceraEscena", LoadSceneMode.Single);    
             }
-            if (premios == 5 && escena.name == "TerceraEscena")
+            if (premios == 2 && escena.name == "TerceraEscena")
             {
                 SceneManager.LoadScene("VictoriaEscena", LoadSceneMode.Single);  
             }
